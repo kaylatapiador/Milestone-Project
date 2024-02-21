@@ -1,0 +1,16 @@
+.card {
+    width: 100px;
+    height: 150px;
+    background-color: #fff;
+    border: 1px solid #000;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+#game {
+    text-align: center;
+}
+
+.player-hand, .dealer-hand {
+    margin-bottom: 20px;
+}
