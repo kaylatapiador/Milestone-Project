@@ -1,9 +1,11 @@
 const colors = ['Red', 'Blue', 'Green'];
 const ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const specialCards = ['Skip-bo'];
+const NUM_CARDS = 5;
 
-const playerHand = [];
-const dealerHand = [];
+//defining user and the AI
+const player = {name:'Player 1',hand:[],stack:[]};
+const aiPlayers = [];
 
 // Create deck of cards [there are 148 colored/numbered cards and 18 special cards = 162 cards in total]
 function createDeck(){
@@ -24,7 +26,6 @@ function createDeck(){
     }
     return deck;
 }
-const deck = createDeck();
 
 //console.log(deck);
 
@@ -36,26 +37,82 @@ function shuffleCards(deck) {
     }
     return deck;
 }
-const shuffledDeck = shuffleCards(deck);
 
 //console.log(shuffledDeck);
 
-
 //Function gets the number of AI playing vs User
-function getNumOfPlayers(){
-    document.getElementById('getNumPlayers').addEventListener('click', function() {
-        // Get the number of players entered by the user
-        const numPlayers = parseInt(document.getElementById('playerInput').value);
+function getNumPlayers() {
+    // Get the number of players entered by the user
+    const numPlayers = parseInt(document.getElementById('playerInput').value);
 
-        // Validate the number of players
-        if (isNaN(numPlayers) || numPlayers < 1 || numPlayers > 5) {
-            document.getElementById('result').textContent = 'Please enter a number between 1 and 5.';
-            
-        } else {
-            // Display the number of players
-            document.getElementById('result').textContent = `Number of players: ${numPlayers}`;
+    // Validate the number of players
+    if (isNaN(numPlayers) || numPlayers < 1 || numPlayers > 5) {
+        document.getElementById('result').textContent = 'Invalid. Please enter a number between 1 and 5.';
+    }
+    return numPlayers;
+}
+
+//this function sets up the array of AI playing agianst the user
+function createAI(name){
+    return{
+        name: name,
+        hand:[],
+        stack:[]
+    };
+}
+
+//This function builds the deck for the players that they need to get rid of to win
+function dealDeck(deck,cards,players){
+    for(let i = 0; i<cards;i++){
+        for(let player of players){
+            player.stack.push(deck.pop());
         }
-    });
+    }
+    
+}
+//This function gives the players the cards they will have on hand
+function dealHand(deck,players){
+    for(let player of players){
+        for(let i = 0; i<NUM_CARDS; i++){
+            player.hand.push(deck.shift());
+        }
+    }
 
 }
 
+//This function shows only the top card of the stack array
+function showStockPile(players){
+    
+}
+
+//This sets up the game 
+function gameSetUp(){
+    const deck = createDeck();
+    const shuffledDeck = shuffleCards(deck);
+    //console.log(shuffledDeck.length);
+    const players = getNumPlayers();
+    
+    for(let i = 0;i<players;i++){
+         let aiPlayer = createAI('AI Player '+ (i+1));
+         aiPlayers.push(aiPlayer);
+    }
+    //console.log(aiPlayers)
+    const allPlayers = [player].concat(aiPlayers);
+    //console.log(allPlayers);
+    if(players < 5 ){
+        dealDeck(shuffledDeck,30,allPlayers);
+    }
+    else{
+        dealDeck(shuffledDeck,20,allPlayers);
+    }
+    //console.log(allPlayers);
+    //console.log(shuffledDeck.length);
+
+    dealHand(shuffledDeck,allPlayers);
+    //console.log(allPlayers);
+    //console.log(shuffledDeck.length);
+
+
+}
+
+document.getElementById('start-button').addEventListener('click', gameSetUp);
