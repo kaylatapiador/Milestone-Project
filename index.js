@@ -5,7 +5,7 @@ const NUM_CARDS = 5;
 
 //defining user and the AI
 const player = {name:'Player 1',hand:[],stack:[]};
-const aiPlayers = [];
+const aiPlayers = {name:'Player 2',hand:[],stack:[]};
 
 // Create deck of cards [there are 148 colored/numbered cards and 18 special cards = 162 cards in total]
 function createDeck(){
@@ -41,7 +41,7 @@ function shuffleCards(deck) {
 //console.log(shuffledDeck);
 
 //Function gets the number of AI playing vs User
-function getNumPlayers() {
+/*function getNumPlayers() {
     // Get the number of players entered by the user
     const numPlayers = parseInt(document.getElementById('playerInput').value);
 
@@ -59,10 +59,11 @@ function createAI(name){
         hand:[],
         stack:[]
     };
-}
+}*/
 
 //This function builds the deck for the players that they need to get rid of to win
 function dealDeck(deck,cards,players){
+
     for(let i = 0; i<cards;i++){
         for(let player of players){
             player.stack.push(deck.pop());
@@ -72,6 +73,7 @@ function dealDeck(deck,cards,players){
 }
 //This function gives the players the cards they will have on hand
 function dealHand(deck,players){
+
     for(let player of players){
         for(let i = 0; i<NUM_CARDS; i++){
             player.hand.push(deck.shift());
@@ -80,9 +82,21 @@ function dealHand(deck,players){
 
 }
 
-//This function shows only the top card of the stack array
-function showStockPile(players){
-    
+function displayHand(player,containerID){
+    const container = document.getElementById(containerID);
+    container.innerHTML = '';
+
+    player.hand.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card');
+        if(player.hand === "Skip-bo")`{
+            cardElement.textContent = 
+        }
+        else{
+            cardElement.textContent = `${card.value} of ${card.suit}`;
+            container.appendChild(cardElement);
+        }
+    });
 }
 
 //This sets up the game 
@@ -90,13 +104,14 @@ function gameSetUp(){
     const deck = createDeck();
     const shuffledDeck = shuffleCards(deck);
     //console.log(shuffledDeck.length);
-    const players = getNumPlayers();
-    
-    for(let i = 0;i<players;i++){
+    //const players = getNumPlayers();
+    const players = 2;
+
+    /*for(let i = 0;i<players;i++){
          let aiPlayer = createAI('AI Player '+ (i+1));
          aiPlayers.push(aiPlayer);
     }
-    //console.log(aiPlayers)
+    //console.log(aiPlayers)*/
     const allPlayers = [player].concat(aiPlayers);
     //console.log(allPlayers);
     if(players < 5 ){

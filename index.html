@@ -7,13 +7,25 @@
   <body>
     <h1>Welcome for a game of Skip-Bo!</h1>
 
-    <label for="playerInput">Enter the number of players(Number of AIs you want to play against):</label>
+    <!--<label for="playerInput">Enter the number of players(Number of AIs you want to play against):</label>
     <input type="number" id="playerInput" min="2" max="4">
     <button id="submitButton">Submit</button>
-    <p id="result"></p>
+    <p id="result"></p>-->
 
     <div id="game">
-      <div id="player-area"></div>
+
+      <div id="player-area">
+        <div id="player-deck"></div>
+        <div id="player-hand"></div>
+        <div id="player-discardPile"></div>
+      </div>
+
+      <div id = "Ai-area">
+        <div id="Ai-deck"></div>
+        <div id="Ai-hand"></div>
+        <div id="Ai-discardPile"></div>
+      </div>
+      
       <div id="center-area"></div>
       <div id="stockpile"></div>
       <div id="discard-pile"></div>
