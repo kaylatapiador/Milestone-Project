@@ -1,28 +1,30 @@
-const colors = ['Red', 'Blue', 'Green'];
-const ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+const suit = ['Red', 'Blue', 'Green'];
+const value = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const specialCards = ['Skip-bo'];
+const specialColors =['Orange'];
 const NUM_CARDS = 5;
 
 //defining user and the AI
-const player = {name:'Player 1',hand:[],stack:[]};
-const aiPlayers = {name:'Player 2',hand:[],stack:[]};
+const player1 = {name:'Player 1', hand:[],stack:[]};
+const player2 = {name:'Player 2', hand:[],stack:[]};
 
 // Create deck of cards [there are 148 colored/numbered cards and 18 special cards = 162 cards in total]
 function createDeck(){
     let deck = [];
 
-    for (let color of colors) {
-        for (let rank of ranks) {
-            deck.push({color, rank});
-            deck.push({color,rank});
-            deck.push({color,rank});
-            deck.push({color,rank});
+    for (let suits of suit) {
+        for (let values of value) {
+            deck.push({suits, values});
+            deck.push({suits,values});
+            deck.push({suits,values});
+            deck.push({suits,values});
         }
     }
     
     for(let i = 0 ; i< 18; i++){
         let specialCard = specialCards
-        deck.push({color:'Orange', value:specialCard });
+        let specialColor = specialColors
+        deck.push({suits:specialColor, values:specialCard });
     }
     return deck;
 }
@@ -83,20 +85,40 @@ function dealHand(deck,players){
 }
 
 function displayHand(player,containerID){
-    const container = document.getElementById(containerID);
-    container.innerHTML = '';
 
-    player.hand.forEach(card => {
-        const cardElement = document.createElement('div');
-        cardElement.classList.add('card');
-        if(player.hand === "Skip-bo")`{
-            cardElement.textContent = 
-        }
-        else{
-            cardElement.textContent = `${card.value} of ${card.suit}`;
-            container.appendChild(cardElement);
-        }
-    });
+    const handContainer = document.getElementById(containerID);
+
+    handContainer.innerHTML = '';
+
+    for(let i = 0; i<player.hand.length;i++){
+        //console.log(player.hand[i]);
+        const card = player.hand[i];
+        //console.log(card);
+        const cardElement = document.createElement("div");
+        cardElement.className = "card";
+        cardElement.textContent = card.suits + ' ' + card.values;
+
+        //console.log(cardElement);
+        handContainer.appendChild(cardElement);
+    }
+        
+}
+
+function displayDeck(player,containerID){
+    const handContainer = document.getElementById(containerID);
+
+    handContainer.innerHTML = '';
+
+     //console.log(player.hand[i]);
+    const card = player.stack[0];
+    //console.log(card);
+    const cardElement = document.createElement("div");
+    cardElement.className = "card";
+    cardElement.textContent = card.suits + ' ' + card.values;
+
+    //console.log(cardElement);
+    handContainer.appendChild(cardElement);
+
 }
 
 //This sets up the game 
@@ -112,7 +134,7 @@ function gameSetUp(){
          aiPlayers.push(aiPlayer);
     }
     //console.log(aiPlayers)*/
-    const allPlayers = [player].concat(aiPlayers);
+    const allPlayers = [player1].concat(player2);
     //console.log(allPlayers);
     if(players < 5 ){
         dealDeck(shuffledDeck,30,allPlayers);
@@ -124,6 +146,14 @@ function gameSetUp(){
     //console.log(shuffledDeck.length);
 
     dealHand(shuffledDeck,allPlayers);
+    console.log(player1);
+    console.log(player2);
+
+    displayHand(player1,'player1-hand');
+    displayHand(player2,'player2-hand');
+
+    displayDeck(player1,'player1-deck');
+    displayDeck(player2,'player2-deck');
     //console.log(allPlayers);
     //console.log(shuffledDeck.length);
 
