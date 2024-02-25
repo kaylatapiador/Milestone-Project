@@ -21,5 +21,5 @@ The reason why I created a webgame version of Skip-bo is because this one of man
 Citations/Resources:
 https://skipborules.com/
 https://www.wikihow.com/Play-Skip-Bo
-
+https://unsplash.com/photos/a-man-riding-a-snowboard-down-the-side-of-a-snow-covered-slope-BtbjCFUvBXs
 */
