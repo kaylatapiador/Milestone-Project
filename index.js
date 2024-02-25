@@ -96,6 +96,18 @@ function displayHand(player,containerID){
         //console.log(card);
         const cardElement = document.createElement("div");
         cardElement.className = "card";
+        if(card.suits ==='Red'){
+            cardElement.classList.add('red');
+        }
+        if(card.suits[0] === 'Orange'){
+            cardElement.classList.add('orange');
+        }
+        if(card.suits === 'Blue'){
+            cardElement.classList.add('blue');
+        }
+        if(card.suits === 'Green'){
+            cardElement.classList.add('green');
+        }
         cardElement.textContent = card.suits + ' ' + card.values;
 
         //console.log(cardElement);
@@ -114,6 +126,18 @@ function displayDeck(player,containerID){
     //console.log(card);
     const cardElement = document.createElement("div");
     cardElement.className = "card";
+    if(card.suits ==='Red'){
+        cardElement.classList.add('red');
+    }
+    if(card.suits[0] === 'Orange'){
+        cardElement.classList.add('orange');
+    }
+    if(card.suits === 'Blue'){
+        cardElement.classList.add('blue');
+    }
+    if(card.suits === 'Green'){
+        cardElement.classList.add('green');
+    }
     cardElement.textContent = card.suits + ' ' + card.values;
 
     //console.log(cardElement);
@@ -121,8 +145,18 @@ function displayDeck(player,containerID){
 
 }
 
+//These function are used to make the the user drag the card in its respective area.
+
+const gameTitle = document.getElementById('gameTitle');
+const startGame = document.getElementById('start-button')
+startGame.addEventListener('click', gameSetUp);
+
+
 //This sets up the game 
 function gameSetUp(){
+    startGame.style.display = 'none';
+    gameTitle.style.display = 'none';
+
     const deck = createDeck();
     const shuffledDeck = shuffleCards(deck);
     //console.log(shuffledDeck.length);
@@ -146,8 +180,8 @@ function gameSetUp(){
     //console.log(shuffledDeck.length);
 
     dealHand(shuffledDeck,allPlayers);
-    console.log(player1);
-    console.log(player2);
+    //console.log(player1);
+    //console.log(player2);
 
     displayHand(player1,'player1-hand');
     displayHand(player2,'player2-hand');
@@ -156,8 +190,12 @@ function gameSetUp(){
     displayDeck(player2,'player2-deck');
     //console.log(allPlayers);
     //console.log(shuffledDeck.length);
+    /*const playerCards = document.querySelectorAll('.card');
+    playerCards.forEach(card => {
+        card.addEventListener('click', moveCardToMiddle);
+    });*/
+
 
 
 }
 
-document.getElementById('start-button').addEventListener('click', gameSetUp);

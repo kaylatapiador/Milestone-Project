@@ -1,20 +1,41 @@
 #game {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    margin:20px auto;
+    width:80%;
     height: 80vh;
 }
 
-#player-area, #center-area, #stockpile, #discard-pile {
-    border: 1px solid black;
+.player-area {
+    border: 1px solid red;
     margin: 10px;
     padding: 20px;
 }
+
+#center-area{
+     margin:10px;
+     padding:20px;
+     border:1px solid black;
+     flex: 2;
+    text-align: center;
+}
+
+#player1-deck,#player2-deck{
+    margin-bottom: 1em;
+}
+
 
 #start-button {
     display: block;
     margin: auto;
     margin-top: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+
 }
 
 .card {
@@ -26,4 +47,23 @@
     text-align: center;
     line-height: 80px;
     font-size: 20px;
+    font-weight: bold;
+    color:aliceblue
+}
+
+.blue{
+    background-color:blue;
+
+}
+
+.green{
+    background-color:green;
+}
+
+.red{
+    background-color:red;
+}
+
+.orange{
+    background-color:orange;
 }
