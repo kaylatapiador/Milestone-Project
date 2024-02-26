@@ -257,24 +257,21 @@ function handlePlayerTwoDblClick(event){
     }
 }
 
-//A function to add the drag attribute into each card
-function makeDraggable(cards) {
-    cards.forEach(card => {
-        card.setAttribute('draggable', true);
-    });
+// Function to set draggable and data-source attributes for a card
+function setCardAttributes(card, source) {
+    card.setAttribute('draggable', 'true');
+    card.setAttribute('data-source', source);
 }
 
 // Function to handle drag start event
 function handleDragStart(event) {
-    event.dataTransfer.setData('text/plain', event.target.id);
+    const card = event.target;
+    const source = card.parentElement.id; // Get the ID of the parent element (deck, hand, or discard pile)
+    event.dataTransfer.setData('text/plain', card.outerHTML); // Store the HTML content of the dragged card
+    event.dataTransfer.setData('source', source); // Store the source of the dragged card
 }
 
-// Function to handle drag over event
-function handleDragOver(event) {
-    event.preventDefault();
-}
-
-// Allow drop by preventing the default behavior
+// Function to allow drop
 function allowDrop(event) {
     event.preventDefault();
 }
@@ -282,22 +279,27 @@ function allowDrop(event) {
 // Function to handle drop event
 function handleDrop(event) {
     event.preventDefault();
-    const data = event.dataTransfer.getData('text/plain');
-    const draggedCard = document.getElementById(data);
-    if (!draggedCard) {
-        console.error('Dragged card not found:', data);
-        return;
-    }
-    const centerArea = document.getElementById('center-area');
-    if (!centerArea) {
-        console.error('Center area not found');
-        return;
-    }
-    centerArea.appendChild(draggedCard);
+    const centerArea = event.target;
+    const draggedCardHTML = event.dataTransfer.getData('text/plain'); // Get the HTML content of the dragged card
+
+    // Create a new card element and set its HTML content to that of the dragged card
+    const droppedCard = document.createElement('div');
+    droppedCard.innerHTML = draggedCardHTML;
+
+    // Remove the draggable attribute from the dropped card
+    droppedCard.querySelector('.card').removeAttribute('draggable');
+
+    // Append the dropped card to the center area
+    centerArea.appendChild(droppedCard);
+
+    // Remove the original card from its parent (deck, hand, or discard pile)
+    const originalCards = document.querySelectorAll('.card');
+    originalCards.forEach(originalCard => {
+        if (originalCard.outerHTML === draggedCardHTML) {
+            originalCard.parentElement.removeChild(originalCard);
+        }
+    });
 }
-
-
-
 const gameTitle = document.getElementById('gameTitle');
 const startGame = document.getElementById('start-button');
 const centerPlay = document.getElementById('center-area');
@@ -357,29 +359,38 @@ function gameSetUp(){
         card.addEventListener('dblclick', handlePlayerTwoDblClick);
     });
 
-    const playerOneDeck = document.querySelectorAll('#player1-deck .card');
-    const playerOneHand = document.querySelectorAll('#player1-hand .card');
-    const playerOneDiscard = document.querySelectorAll('#player1-discardPile .card');
+    const playerOneDeck = document.getElementById('player1-deck');
+    const playerOneHand = document.getElementById('player1-hand');
+    const playerOneDiscardPile = document.getElementById('player1-discardPile');
+    const gamePlay = document.getElementById('center-area');
 
-    makeDraggable(playerOneDeck);
-    makeDraggable(playerOneHand);
-    makeDraggable(playerOneDiscard);
+    // Add event listeners to cards in player 1's deck
+    playerOneDeck.querySelectorAll('.card').forEach(card => {
+        setCardAttributes(card, 'deck'); // Set attributes for the card
+        card.addEventListener('dragstart', handleDragStart);
+    });
+
+    // Add event listeners to cards in player 1's hand
+    playerOneHand.querySelectorAll('.card').forEach(card => {
+        setCardAttributes(card, 'hand'); // Set attributes for the card
+        card.addEventListener('dragstart', handleDragStart);
+    });
+
+    // Add event listeners to cards in player 1's discard pile
+    playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
+        setCardAttributes(card, 'discard'); // Set attributes for the card
+        card.addEventListener('dragstart', handleDragStart);
+    });
+
+    // Add event listeners to the center area of play for drop events
+    gamePlay.addEventListener('drop', handleDrop);
+    gamePlay.addEventListener('dragover', allowDrop);
 
     const playerOneCards = document.querySelectorAll('#player-1 .card');
     playerOneCards.forEach(card => {
         card.addEventListener('dblclick', handlePlayerOneDblClick);
     });
 
-    
-    
-    const gamePlay = document.getElementById('center-area');
-    gamePlay.addEventListener('dragover', handleDragOver);
-    gamePlay.addEventListener('drop', handleDrop);
-    //this do while loop will function for the game play up until there is a declared winner so this loop will run 
-    // as long as neither player has 0 cards left on their deck.
-    //do{
-
-    //}while(player1.stack.length>0 || player2.stack.length >0 )
 
     const drawCard = document.getElementById('draw-card');
     //drawCard.addEventListener('click', drawForFive(player1,shuffledDeck));
