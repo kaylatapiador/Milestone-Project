@@ -18,47 +18,49 @@
 
       <div id = "message"></div> 
       <button id = "endTurn" style="display: none;">End Turn</button>
-      <div class="player-area">
+      
+      <div class="player-area" id = "player-1">
         
         <h2>Player 1</h2>
        
         <div class="Deck">
           <label for="player1-deck">Deck:</label>
-                <div id="player1-deck" draggable="true" ondrag="drag(event)"></div>
+                <div id="player1-deck" ></div>
         </div>
 
         <div class="Hand">
           <label for="player1-hand">Hand:</label>
-                <div id="player1-hand" draggable="true" ondrag="drag(event)"></div>
+                <div id="player1-hand" ></div>
         </div>
 
         <div class="Discard">
           <label for="player1-discard">Discard:</label>
-                <div id="player1-discardPile" draggable="true" ondrag="drag(event)" ></div>
+                <div id="player1-discardPile" ></div>
         </div>
       </div>
 
-      <div id="center-area">
+      <div id="center-area" >
         <h2>Gameplay Area</h2>
+
       </div>
 
-      <div class="player-area">
+      <div class="player-area" id="player-2">
      
         <h2>Player 2</h2>
 
         <div class="Deck">
           <label for="player2-deck">Deck:</label>
-                <div id="player2-deck" draggable="true" ondrag="drag(event)"></div>
+                <div id="player2-deck"></div>
         </div>
 
         <div class="Hand">
           <label for="player2-hand">Hand:</label>
-                <div id="player2-hand" draggable="true" ondrag="drag(event)"></div>
+                <div id="player2-hand"></div>
         </div>
 
         <div class="Discard">
           <label for="player2-discard">Discard:</label>
-                <div id="player2-discardPile"draggable="true" ondrag="drag(event)"></div>
+                <div id="player2-discardPile"></div>
         </div>
 
       </div>
@@ -76,7 +78,6 @@
 
 
   <script src="index.js"></script>
-  <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
   
   </body>
 </html>

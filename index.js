@@ -5,7 +5,7 @@ const specialColors =['Orange'];
 const NUM_CARDS = 5;
 
 //defining user and the AI
-const player1 = {name:'Player 1', hand:[],stack:[],discard:{'pile1':[],'pile2':[],'pile3':[],'pile4':[]}};
+const player1 = {name:'Player 1', hand:[],stack:[],discard:[]};
 const player2 = {name:'Player 2', hand:[],stack:[],discard:[]};
 
 // Create deck of cards [there are 148 colored/numbered cards and 18 special cards = 162 cards in total]
@@ -66,7 +66,7 @@ function dealHand(deck,players){
 //This is where the user places a card to end their turn when there are no other possible moves for them to do.
 //This function should show strictness as it should only allow the player to put down four different kinds of card value into the array.
 //However if there is a similar card that already exist in the array it can therefore be pushed into the array. 
-function discardPile(player,card){
+function discardPile(card){
 
     for(let pileName in discard){
         if(discard[pileName].length > 0 && discard[pileName][0] === card){
@@ -210,9 +210,98 @@ function handleEndTurn(){
     turnMessage(currentPlayer);
 }
 
+let counterCard = 0;
+let counterCard2= 0;
+
+function handlePlayerOneDblClick(event){
+    const clickedCard = event.target;
+    const discardPile = document.getElementById('player1-discardPile');
+
+    //check if card is in the array. if it comes out true then the card is allowed to be pushed into the array
+    if (player1.discard.includes(clickedCard.textContent)) {
+        discardPile.appendChild(clickedCard);
+        player1.discard.push(clickedCard.textContent);
+    }
+    //if the card isnt in the array and the counter isnt at 4 then card can go to discard pile and card can be stored into the array. 
+    //counter then updates bc now their is a variable number of different value of cards.
+    else if (!player1.discard.includes(clickedCard) && counterCard < 4) {
+        discardPile.appendChild(clickedCard);
+        player1.discard.push(clickedCard.textContent);
+        counterCard++;
+        //console.log('Player 1 counter:', counterCard);
+    }
+    else if (counterCard >= 4) {
+        alert('Player 1: Only four different card values are allowed in the discard pile.');
+    }
+}
+
+function handlePlayerTwoDblClick(event){
+    const clickedCard = event.target;
+    const discardPile = document.getElementById('player2-discardPile');
+
+    //check if card is in the array. if it comes out true then the card is allowed to be pushed into the array
+    if(player2.discard.includes(clickedCard.textContent)){
+        discardPile.appendChild(clickedCard); //move card to the players discard array pile
+         player2.discard.push(clickedCard.textContent);
+    }
+    //if the card isnt in the array and the counter isnt at 4 then card can go to discard pile and card can be stored into the array. 
+    //counter then updates bc now their is a variable number of different value of cards.
+    else if(!player2.discard.includes(clickedCard) && counterCard2 < 4){
+        discardPile.appendChild(clickedCard);
+        player2.discard.push(clickedCard.textContent);
+        counterCard2++;
+        console.log(counterCard2);
+    }
+    else if(counterCard2 >=4){
+        alert('Player 2: Only Four different card values are allowed to be in the discard pile.')
+    }
+}
+
+//A function to add the drag attribute into each card
+function makeDraggable(cards) {
+    cards.forEach(card => {
+        card.setAttribute('draggable', true);
+    });
+}
+
+// Function to handle drag start event
+function handleDragStart(event) {
+    event.dataTransfer.setData('text/plain', event.target.id);
+}
+
+// Function to handle drag over event
+function handleDragOver(event) {
+    event.preventDefault();
+}
+
+// Allow drop by preventing the default behavior
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+// Function to handle drop event
+function handleDrop(event) {
+    event.preventDefault();
+    const data = event.dataTransfer.getData('text/plain');
+    const draggedCard = document.getElementById(data);
+    if (!draggedCard) {
+        console.error('Dragged card not found:', data);
+        return;
+    }
+    const centerArea = document.getElementById('center-area');
+    if (!centerArea) {
+        console.error('Center area not found');
+        return;
+    }
+    centerArea.appendChild(draggedCard);
+}
+
+
 
 const gameTitle = document.getElementById('gameTitle');
-const startGame = document.getElementById('start-button')
+const startGame = document.getElementById('start-button');
+const centerPlay = document.getElementById('center-area');
+const discard = document.getElementById('discard-pile');
 startGame.addEventListener('click', gameSetUp);
 
 
@@ -235,14 +324,9 @@ function gameSetUp(){
     const deck = createDeck();
     const shuffledDeck = shuffleCards(deck);
     //console.log(shuffledDeck.length);
-    //const players = getNumPlayers();
+
     const players = 2;
 
-    /*for(let i = 0;i<players;i++){
-         let aiPlayer = createAI('AI Player '+ (i+1));
-         aiPlayers.push(aiPlayer);
-    }
-    //console.log(aiPlayers)*/
     const allPlayers = [player1].concat(player2);
     //console.log(allPlayers);
     if(players < 5 ){
@@ -267,6 +351,30 @@ function gameSetUp(){
     const endTurn = document.getElementById('endTurn');
     endTurn.addEventListener('click',handleEndTurn);
 
+   const playerTwoCards = document.querySelectorAll('#player-2 .card');
+
+    playerTwoCards.forEach(card => {
+        card.addEventListener('dblclick', handlePlayerTwoDblClick);
+    });
+
+    const playerOneDeck = document.querySelectorAll('#player1-deck .card');
+    const playerOneHand = document.querySelectorAll('#player1-hand .card');
+    const playerOneDiscard = document.querySelectorAll('#player1-discardPile .card');
+
+    makeDraggable(playerOneDeck);
+    makeDraggable(playerOneHand);
+    makeDraggable(playerOneDiscard);
+
+    const playerOneCards = document.querySelectorAll('#player-1 .card');
+    playerOneCards.forEach(card => {
+        card.addEventListener('dblclick', handlePlayerOneDblClick);
+    });
+
+    
+    
+    const gamePlay = document.getElementById('center-area');
+    gamePlay.addEventListener('dragover', handleDragOver);
+    gamePlay.addEventListener('drop', handleDrop);
     //this do while loop will function for the game play up until there is a declared winner so this loop will run 
     // as long as neither player has 0 cards left on their deck.
     //do{
@@ -274,7 +382,7 @@ function gameSetUp(){
     //}while(player1.stack.length>0 || player2.stack.length >0 )
 
     const drawCard = document.getElementById('draw-card');
-    drawCard.addEventListener('click', drawForFive);
+    //drawCard.addEventListener('click', drawForFive(player1,shuffledDeck));
 
     //drawForFive(player1,shuffledDeck);
 

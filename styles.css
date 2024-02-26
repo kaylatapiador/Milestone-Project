@@ -28,6 +28,29 @@ game {
      border:1px solid black;
      flex: 2;
     text-align: center;
+    position: relative;
+}
+
+#Stack-1, #Stack-2, #Stack-3, #Stack-4{
+    border:1px solid red;
+    margin:1em;
+    
+}
+
+ /* Style for stacked cards */
+ .stacked-card {
+    /*position: absolute;*/
+    border: 1px solid black;
+    width: 100px;
+    height: 150px;
+    margin: 5px;
+    display: inline-block;
+    text-align: center;
+    line-height: 80px;
+    font-size: 20px;
+    font-weight: bold;
+    color:rgb(0, 1, 1)
+
 }
 
 #player1-deck,#player2-deck{
