@@ -392,10 +392,6 @@ function handleDrop(event) {
                 card.setAttribute('data-index', i);
 
             });
-            const lastCard = centerArea.lastElementChild;
-            if (lastCard) {
-            lastCard.classList.add('hidden');
-            }
 
             //console.log("Player 1 hand length after removal:", player1.hand.length);
         }
