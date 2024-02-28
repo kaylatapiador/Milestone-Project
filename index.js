@@ -63,27 +63,6 @@ function dealHand(deck,players){
 
 }
 
-//This is where the user places a card to end their turn when there are no other possible moves for them to do.
-//This function should show strictness as it should only allow the player to put down four different kinds of card value into the array.
-//However if there is a similar card that already exist in the array it can therefore be pushed into the array. 
-function discardPile(card){
-
-    for(let pileName in discard){
-        if(discard[pileName].length > 0 && discard[pileName][0] === card){
-            discard[pileName].push(card);
-            return pileName;
-        }
-    }
-
-    for(let pileName in discard){
-        if(discard[pileName].length ===0){
-            discard[pileName].push(card);
-            return pileName;
-        }
-    }
-    return false;
-}
-
 //Similar to display hand function however separate function is needed as its accessing a different array. 
 function displayDiscard(player,containerID){
     const handContainer = document.getElementById(containerID);
@@ -209,6 +188,7 @@ function drawForFive(player, deck) {
             console.log("New card created:", newCard.textContent);
 
             // Append the new card to the player's hand
+            console.log(player.name);
             if(player.name === "Player 1"){
                  const playerHand = document.getElementById('player1-hand');
                  console.log("Player hand element:", playerHand);
@@ -217,7 +197,9 @@ function drawForFive(player, deck) {
                 // Update player's hand array
                 player.hand.push(drawCard);
             }
+
             else{
+                console.log("does this work");
                 const playerHand = document.getElementById('player2-hand');
                  console.log("Player hand element:", playerHand);
                  playerHand.appendChild(newCard);
@@ -261,7 +243,6 @@ function endPlayerTurn() {
 function handlePlayerOneDblClick(event){
     const clickedCard = event.target;
     const discardPile = document.getElementById('player1-discardPile');
-
     const index = Array.from(clickedCard.parentNode.children).indexOf(clickedCard);
 
 
@@ -270,6 +251,7 @@ function handlePlayerOneDblClick(event){
         discardPile.appendChild(clickedCard);
         player1.discard.push(clickedCard.textContent);
         player1.hand.splice(index, 1);
+        console.log(player1.hand.length);
     }
     //if the card isnt in the array and the counter isnt at 4 then card can go to discard pile and card can be stored into the array. 
     //counter then updates bc now their is a variable number of different value of cards.
@@ -278,28 +260,33 @@ function handlePlayerOneDblClick(event){
         player1.discard.push(clickedCard.textContent);
         player1.hand.splice(index, 1);
         counterCard++;
+        console.log(player1.hand.length);
         //console.log('Player 1 counter:', counterCard);
     }
     else if (counterCard >= 4) {
         alert('Player 1: Only four different card values are allowed in the discard pile.');
     }
+    console.log(player1.hand.length);
     endPlayerTurn();
 }
 
 function handlePlayerTwoDblClick(event){
     const clickedCard = event.target;
     const discardPile = document.getElementById('player2-discardPile');
+    const index = Array.from(clickedCard.parentNode.children).indexOf(clickedCard);
 
     //check if card is in the array. if it comes out true then the card is allowed to be pushed into the array
     if(player2.discard.includes(clickedCard.textContent)){
         discardPile.appendChild(clickedCard); //move card to the players discard array pile
-         player2.discard.push(clickedCard.textContent);
+        player2.hand.splice(index, 1);
+        player2.discard.push(clickedCard.textContent);
     }
     //if the card isnt in the array and the counter isnt at 4 then card can go to discard pile and card can be stored into the array. 
     //counter then updates bc now their is a variable number of different value of cards.
     else if(!player2.discard.includes(clickedCard) && counterCard2 < 4){
         discardPile.appendChild(clickedCard);
         player2.discard.push(clickedCard.textContent);
+        player2.hand.splice(index, 1);
         counterCard2++;
         //console.log(counterCard2);
     }
@@ -329,6 +316,7 @@ function allowDrop(event) {
     event.preventDefault();
 }
 
+let discardPile = [];
 // Function to handle drop event
 function handleDrop(event) {
     event.preventDefault();
@@ -392,7 +380,7 @@ function handleDrop(event) {
                 card.setAttribute('data-index', i);
 
             });
-
+            player1.hand.splice(index, 1);
             //console.log("Player 1 hand length after removal:", player1.hand.length);
         }
     }
@@ -406,6 +394,7 @@ function handleDrop(event) {
             remainingCards.forEach((card, i) => {
                 card.setAttribute('data-index', i);
             });
+            player2.hand.splice(index, 1);
         }
     }
 
@@ -437,6 +426,8 @@ function handleDrop(event) {
         }   
 
     }
+
+
 }
 
 function addPile(){
@@ -528,7 +519,8 @@ document.addEventListener('DOMContentLoaded',function(){
                 if (player1.hand.length < 5) {
                     drawForFive(player1, deck);
                 }
-            } else {
+            } 
+            if(currentPlayer === 'Player 2') {
                 if (player2.hand.length < 5) {
                     drawForFive(player2, deck);
                 }
