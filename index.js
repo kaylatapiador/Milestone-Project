@@ -187,6 +187,7 @@ function drawForFive(player, deck) {
     if (player.hand.length < 5) {
         console.log("if statement works");
         if (deck.length > 0) {
+            // Move the declaration of drawCard here
             const drawCard = deck.pop();
 
             const newCard = document.createElement('div');
@@ -225,14 +226,15 @@ function drawForFive(player, deck) {
                 player.hand.push(drawCard);
             }
             
-        } else {
+        } 
+        else {
             alert('No more cards in the deck! Please reshuffle for a new deck');
         }
-    } else {
+    } 
+    else {
         alert('You already have five cards, you cannot draw another card!');
     }
 }
-
 //This function is to let the user know who's turn it is.
 function turnMessage(player){
     const turnMessage = document.getElementById('message');
@@ -253,6 +255,7 @@ function endPlayerTurn() {
     
     currentPlayer = currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
     turnMessage(currentPlayer);
+    playerholder = currentPlayer;
 }
 
 function handlePlayerOneDblClick(event){
@@ -355,6 +358,7 @@ function handleDrop(event) {
             remainingCards.forEach((card, i) => {
                 card.setAttribute('data-index', i);
             });
+
             //console.log(player1.stack);
             displayDeck(player1, 'player1-deck');
         }
@@ -388,8 +392,12 @@ function handleDrop(event) {
                 card.setAttribute('data-index', i);
 
             });
-            player1.hand.splice(index, 1);
-            console.log("Player 1 hand length after removal:", player1.hand.length);
+            const lastCard = centerArea.lastElementChild;
+            if (lastCard) {
+            lastCard.classList.add('hidden');
+            }
+
+            //console.log("Player 1 hand length after removal:", player1.hand.length);
         }
     }
 
@@ -520,14 +528,15 @@ document.addEventListener('DOMContentLoaded',function(){
 
     function playGame(deck){
         drawCard.addEventListener('click', function() {
-            if(turnMessage)
-                if(player1.hand.length<5){
+            if (currentPlayer === 'Player 1') {
+                if (player1.hand.length < 5) {
                     drawForFive(player1, deck);
                 }
-                else{
-                    drawForFive(player2,deck);
+            } else {
+                if (player2.hand.length < 5) {
+                    drawForFive(player2, deck);
                 }
-                    
+            }
         });
 
         function gameLoop(){
