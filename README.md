@@ -26,6 +26,9 @@ https://www.wikihow.com/Play-Skip-Bo
 https://unsplash.com/photos/a-man-riding-a-snowboard-down-the-side-of-a-snow-covered-slope-BtbjCFUvBXs
 https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 https://www.w3schools.com/jsref/event_ondrag.asp
+https://www.w3schools.com/jsref/jsref_splice.asp
 https://www.youtube.com/watch?v=_G8G1OrEOrI
 https://www.youtube.com/watch?v=7HUCAYMylCQ
+https://www.youtube.com/watch?v=Bj6lC93JMi0 
+(Also used ChatGPT to help fix some of errors showing up throughout this process)
 */
