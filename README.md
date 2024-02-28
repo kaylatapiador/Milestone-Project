@@ -14,6 +14,8 @@ A player must have on hand 5 cards. If the player has a Skip-bo card or a number
 
 On the players second turn they must draw enough cards to bring their hand back up to 5. Afterwards, they may add to the BUILDING pile by playing the top card from either the DECK pile, DISCARD pile or what they have on hand. However, the winner is determined based on which player plays all the cards from their DECK pile so its always best to try to use the DECK pile first. If there are no more cards to draw from players can reshuffle the deck from the completed building piles to become a new DRAW pile. 
 
+Heres also a video showing how to play the game: https://www.youtube.com/watch?v=Z-b_XTnMRck
+
 About the Game creator and the inspiration behind this game:
 
 The reason why I created a webgame version of Skip-bo is because this one of many card games my friends and I like to play on game night. Unlike other card games there was just more excitement playing Skip-bo as you need to strategically think about your moves in order to help get rid of your DECK pile while keeping in mind the cards you play on the center area can be used to the advantage of your opponent. I also think its a very unique and intersting game that separates itself from card games like uno. Skip-bo can also be played by keeping score however in this version and based on experience I preferred to create a skip-bo game that is a race to whoever can finish their DECK pile first. 
