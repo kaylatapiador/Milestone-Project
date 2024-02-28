@@ -217,7 +217,7 @@ function playerNum(num){
     return 2;
 }
 
-/*function handleEndTurn(){
+function handleEndTurn(){
     const currentPlayer = playerNum();
 
     if(currentPlayer === 1){
@@ -227,7 +227,7 @@ function playerNum(num){
         turnMessage('Player 2');
     }
     
-}*/
+}
 
 let counterCard = 0;
 let counterCard2= 0;
@@ -327,6 +327,7 @@ function handleDrop(event) {
             });
             //console.log(player1.stack);
             displayDeck(player1, 'player1-deck');
+        }
     }
     if(source === 'player2-deck'){
         const originalCard = document.querySelectorAll('#player2-deck .card')[index];
@@ -345,26 +346,25 @@ function handleDrop(event) {
             displayDeck(player2, 'player2-deck');
             }
     }
-    if(source === 'player1-hand'){
-            const originalCard = document.querySelectorAll('#player1-hand .card')[index];
-            if (originalCard) {
+    if (source === 'player1-hand') {
+       
+        const originalCard = document.querySelectorAll('#player1-hand .card')[index];
+        if (originalCard) {
             originalCard.parentElement.removeChild(originalCard);
-
             // Update the indices of remaining cards
             const remainingCards = document.querySelectorAll('#player1-hand .card');
-                remainingCards.forEach((card, i) => {
-                    card.setAttribute('data-index', i);
-                });
-            }
+            remainingCards.forEach((card, i) => {
+                card.setAttribute('data-index', i);
+            });
+        }
     }
 
-    if(source === 'player2-hand'){
+    if (source === 'player2-hand') {
         const originalCard = document.querySelectorAll('#player2-hand .card')[index];
         if (originalCard) {
-        originalCard.parentElement.removeChild(originalCard);
-
-        // Update the indices of remaining cards
-        const remainingCards = document.querySelectorAll('#player2-hand .card');
+            originalCard.parentElement.removeChild(originalCard);
+            // Update the indices of remaining cards
+            const remainingCards = document.querySelectorAll('#player2-hand .card');
             remainingCards.forEach((card, i) => {
                 card.setAttribute('data-index', i);
             });
@@ -397,7 +397,7 @@ function handleDrop(event) {
                 card.setAttribute('data-index', i);
             });
         }   
-    }
+
     }
 }
 
@@ -442,6 +442,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
     //This sets up the game 
     function gameSetUp(){
+        console.log("test 1");
         startGame.style.display = 'none';
         gameTitle.style.display = 'none';
 
@@ -487,47 +488,30 @@ document.addEventListener('DOMContentLoaded',function(){
 
     function playGame(deck){
 
-        if(player1.stack.length != 0){
-            takeTurns(player1,deck);
-            playerNum(0);
-        }
-        if(player1.stack.length === 0){
-            alert("Player one has no cards left in their deck. Player one wins!");
-        }
-
-        const endTurn = document.getElementById('endTurn');
-       
-        endTurn.addEventListener('click',function(){
-            const currentPlayer = playerNum();
-
-            if(currentPlayer === 1){
-                turnMessage('Player 1');
-                if(player1.stack.length != 0){
+        function gameLoop(){
+            if(player1.stack.length!== 0 && player2.stack.length !==0){
                 takeTurns(player1,deck);
-                playerNum(0);
-                }
-                if(player1.stack.length === 0){
-                    alert("Player one has no cards left in their deck. Player one wins!");
-
-                }
+                takeTurns(player2,deck);
+                setTimeout(gameLoop,0)
             }
             else{
-                turnMessage('Player 2');
-                if(player2.stack.length !=0){
-                    takeTurns(player2,deck);
-                playerNum(1);
+                if(player1.stack.length === 0){
+                    alert("Player one has no cards left in their deck. Player one wins!");
                 }
                 if(player2.stack.length === 0){
                     alert("Player two has no cards left in their deck. Player two wins!");
                 }
-            }
 
-        });
+            }
+        }
+        gameLoop();
         
     }
 
     function takeTurns(player,deck){
+        console.log('test 3');
         const drawCard = document.getElementById('draw-card');
+        const endTurn = document.getElementById('endTurn');
         
 
         if(player.hand.length< 5 && player.name === "Player 1"){
@@ -541,8 +525,8 @@ document.addEventListener('DOMContentLoaded',function(){
             playerOneDeck.querySelectorAll('.card').forEach(card => {
                 setCardAttributes(card, 'deck'); // Set attributes for the card
                 card.addEventListener('dragstart', handleDragStart);
-                console.log(player1.stack);
-                console.log(playerOneDeck);
+                //console.log(player1.stack);
+                //console.log(playerOneDeck);
             //console.log("hello");
             });
     
@@ -570,6 +554,8 @@ document.addEventListener('DOMContentLoaded',function(){
             playerOneCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerOneDblClick);
             });
+            playerNum(0);
+            endTurn.addEventListener('click',handleEndTurn);
         }
 
         if(player.name === "Player 1" && player.hand.length === 5){
@@ -609,6 +595,9 @@ document.addEventListener('DOMContentLoaded',function(){
                 card.addEventListener('dblclick', handlePlayerOneDblClick);
             });
 
+            playerNum(0);
+            endTurn.addEventListener('click',handleEndTurn);
+
         }
 
         if(player.hand.length< 5 && player.name === "Player 2"){
@@ -640,6 +629,8 @@ document.addEventListener('DOMContentLoaded',function(){
             playerTwoCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerTwoDblClick);
             });
+            playerNum(1);
+            endTurn.addEventListener('click',handleEndTurn);
 
         }
 
@@ -671,6 +662,8 @@ document.addEventListener('DOMContentLoaded',function(){
             playerTwoCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerTwoDblClick);
             });
+            playerNum(1);
+            endTurn.addEventListener('click',handleEndTurn);
         }
 
            
