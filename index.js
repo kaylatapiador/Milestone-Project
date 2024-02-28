@@ -182,6 +182,7 @@ function displayDeck(player,containerID){
 
 //This function is used when the player needs to draw a card to have five on hand.
 function drawForFive(player,deck){
+    console.log("test");
     if(player.hand.length>5){
         const drawCard = deck.pop();
 
@@ -216,7 +217,7 @@ function playerNum(num){
     return 2;
 }
 
-function handleEndTurn(){
+/*function handleEndTurn(){
     const currentPlayer = playerNum();
 
     if(currentPlayer === 1){
@@ -226,7 +227,7 @@ function handleEndTurn(){
         turnMessage('Player 2');
     }
     
-}
+}*/
 
 let counterCard = 0;
 let counterCard2= 0;
@@ -318,8 +319,6 @@ function handleDrop(event) {
             // Remove the card from the player's stack array
             const cardIndex = parseInt(originalCard.getAttribute('data-index'));
             player1.stack.splice(cardIndex, 1);
-            // Remove the draggable attribute from the dropped card
-            droppedCard.querySelector('.card').removeAttribute('draggable');
             originalCard.parentElement.removeChild(originalCard);
             // Update the indices of remaining cards
             const remainingCards = document.querySelectorAll('#player1-deck .card');
@@ -328,7 +327,6 @@ function handleDrop(event) {
             });
             //console.log(player1.stack);
             displayDeck(player1, 'player1-deck');
-            }
     }
     if(source === 'player2-deck'){
         const originalCard = document.querySelectorAll('#player2-deck .card')[index];
@@ -336,14 +334,13 @@ function handleDrop(event) {
             // Remove the card from the player's stack array
             const cardIndex = parseInt(originalCard.getAttribute('data-index'));
             player2.stack.splice(cardIndex, 1);
-            // Remove the draggable attribute from the dropped card
-            droppedCard.querySelector('.card').removeAttribute('draggable');
             originalCard.parentElement.removeChild(originalCard);
             // Update the indices of remaining cards
             const remainingCards = document.querySelectorAll('#player2-deck .card');
             remainingCards.forEach((card, i) => {
                 card.setAttribute('data-index', i);
             });
+
             //console.log(player1.stack);
             displayDeck(player2, 'player2-deck');
             }
@@ -351,8 +348,6 @@ function handleDrop(event) {
     if(source === 'player1-hand'){
             const originalCard = document.querySelectorAll('#player1-hand .card')[index];
             if (originalCard) {
-            // Remove the draggable attribute from the dropped card
-            droppedCard.querySelector('.card').removeAttribute('draggable');
             originalCard.parentElement.removeChild(originalCard);
 
             // Update the indices of remaining cards
@@ -366,8 +361,6 @@ function handleDrop(event) {
     if(source === 'player2-hand'){
         const originalCard = document.querySelectorAll('#player2-hand .card')[index];
         if (originalCard) {
-        // Remove the draggable attribute from the dropped card
-        droppedCard.querySelector('.card').removeAttribute('draggable');
         originalCard.parentElement.removeChild(originalCard);
 
         // Update the indices of remaining cards
@@ -381,8 +374,6 @@ function handleDrop(event) {
     if(source === 'player1-discardPile'){
             const originalCard = document.querySelectorAll('#player1-discardPile .card')[index];
             if (originalCard) {
-                // Remove the draggable attribute from the dropped card
-                droppedCard.querySelector('.card').removeAttribute('draggable');
                 originalCard.parentElement.removeChild(originalCard);
 
                 // Update the indices of remaining cards
@@ -397,7 +388,7 @@ function handleDrop(event) {
         const originalCard = document.querySelectorAll('#player2-discardPile .card')[index];
         if (originalCard) {
             // Remove the draggable attribute from the dropped card
-            droppedCard.querySelector('.card').removeAttribute('draggable');
+            //droppedCard.querySelector('.card').removeAttribute('draggable');
             originalCard.parentElement.removeChild(originalCard);
 
             // Update the indices of remaining cards
@@ -406,6 +397,7 @@ function handleDrop(event) {
                 card.setAttribute('data-index', i);
             });
         }   
+    }
     }
 }
 
@@ -489,26 +481,57 @@ document.addEventListener('DOMContentLoaded',function(){
         displayDeck(player1,'player1-deck');
         displayDeck(player2,'player2-deck');
 
-        playGame(allPlayers,shuffledDeck);
+        playGame(shuffledDeck);
 
     }
 
-    function playGame(players,deck){
-        while(!gameOver(players)){
-            takeTurns(players[0],deck);
+    function playGame(deck){
 
-            if(gameOver(players))break;
-
-            takeTurns(players[1],deck);
+        if(player1.stack.length != 0){
+            takeTurns(player1,deck);
+            playerNum(0);
         }
+        if(player1.stack.length === 0){
+            alert("Player one has no cards left in their deck. Player one wins!");
+        }
+
+        const endTurn = document.getElementById('endTurn');
+       
+        endTurn.addEventListener('click',function(){
+            const currentPlayer = playerNum();
+
+            if(currentPlayer === 1){
+                turnMessage('Player 1');
+                if(player1.stack.length != 0){
+                takeTurns(player1,deck);
+                playerNum(0);
+                }
+                if(player1.stack.length === 0){
+                    alert("Player one has no cards left in their deck. Player one wins!");
+
+                }
+            }
+            else{
+                turnMessage('Player 2');
+                if(player2.stack.length !=0){
+                    takeTurns(player2,deck);
+                playerNum(1);
+                }
+                if(player2.stack.length === 0){
+                    alert("Player two has no cards left in their deck. Player two wins!");
+                }
+            }
+
+        });
+        
     }
 
     function takeTurns(player,deck){
         const drawCard = document.getElementById('draw-card');
-        const endTurn = document.getElementById('endTurn');
-        endTurn.addEventListener('click',handleEndTurn);
+        
 
         if(player.hand.length< 5 && player.name === "Player 1"){
+            console.log("test 1");
             drawCard.addEventListener('click', drawForFive(player1,deck));
             const playerOneDeck = document.getElementById('player1-deck');
             const playerOneHand = document.getElementById('player1-hand');
@@ -518,6 +541,8 @@ document.addEventListener('DOMContentLoaded',function(){
             playerOneDeck.querySelectorAll('.card').forEach(card => {
                 setCardAttributes(card, 'deck'); // Set attributes for the card
                 card.addEventListener('dragstart', handleDragStart);
+                console.log(player1.stack);
+                console.log(playerOneDeck);
             //console.log("hello");
             });
     
@@ -545,7 +570,6 @@ document.addEventListener('DOMContentLoaded',function(){
             playerOneCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerOneDblClick);
             });
-            playerNum(0);
         }
 
         if(player.name === "Player 1" && player.hand.length === 5){
@@ -584,7 +608,7 @@ document.addEventListener('DOMContentLoaded',function(){
             playerOneCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerOneDblClick);
             });
-            playerNum(0);
+
         }
 
         if(player.hand.length< 5 && player.name === "Player 2"){
@@ -617,8 +641,6 @@ document.addEventListener('DOMContentLoaded',function(){
                 card.addEventListener('dblclick', handlePlayerTwoDblClick);
             });
 
-            playerNum(1);
-
         }
 
         if(player.name === "Player 2" && player.hand.length === 5){
@@ -649,7 +671,6 @@ document.addEventListener('DOMContentLoaded',function(){
             playerTwoCards.forEach(card => {
                 card.addEventListener('dblclick', handlePlayerTwoDblClick);
             });
-            playerNum(1);
         }
 
            
@@ -665,7 +686,5 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 
-function gameOver(players){
-    return players.some(player =>player.stack.length === 0);
-}
+
 
