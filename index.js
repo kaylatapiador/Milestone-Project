@@ -150,30 +150,34 @@ function displayHand(player,containerID){
 function displayDeck(player,containerID){
     const handContainer = document.getElementById(containerID);
 
-    handContainer.innerHTML = '';
+    handContainer.innerHTML = ''; // Clear the container
 
-     //console.log(player.hand[i]);
-    const card = player.stack[0];
-    //console.log(card);
-    const cardElement = document.createElement("div");
-    cardElement.className = "card";
-    if(card.suits ==='Red'){
-        cardElement.classList.add('red');
-    }
-    if(card.suits[0] === 'Orange'){
-        cardElement.classList.add('orange');
-    }
-    if(card.suits === 'Blue'){
-        cardElement.classList.add('blue');
-    }
-    if(card.suits === 'Green'){
-        cardElement.classList.add('green');
-    }
-    cardElement.textContent = card.suits + ' ' + card.values;
+    for (let i = 0; i < player.stack.length; i++) {
+        const card = player.stack[i];
+        const cardElement = document.createElement("div");
+        cardElement.className = "card";
+        // Apply appropriate styling based on card attributes
+        if (card.suits === 'Red') {
+            cardElement.classList.add('red');
+        }
+        if (card.suits[0] === 'Orange') {
+            cardElement.classList.add('orange');
+        }
+        if (card.suits === 'Blue') {
+            cardElement.classList.add('blue');
+        }
+        if (card.suits === 'Green') {
+            cardElement.classList.add('green');
+        }
+        // Set the text content of the card element
+        cardElement.textContent = card.suits + ' ' + card.values;
+        handContainer.appendChild(cardElement);
 
-    //console.log(cardElement);
-    handContainer.appendChild(cardElement);
-
+        // Hide all cards except the first one
+        if (i !== 0) {
+            cardElement.style.display = 'none';
+        }
+    }
 }
 
 //This function is used when the player needs to draw a card to have five on hand.
@@ -205,9 +209,23 @@ function turnMessage(player){
     }
 }
 
+function playerNum(num){
+    if(num === 0){
+        return 1;
+    }
+    return 2;
+}
+
 function handleEndTurn(){
-    const currentPlayer = player2.name;
-    turnMessage(currentPlayer);
+    const currentPlayer = playerNum();
+
+    if(currentPlayer === 1){
+        turnMessage('Player 1');
+    }
+    else{
+        turnMessage('Player 2');
+    }
+    
 }
 
 let counterCard = 0;
@@ -267,10 +285,11 @@ function setCardAttributes(card, source) {
 function handleDragStart(event) {
     const card = event.target;
     const source = card.parentElement.id; // Get the ID of the parent element (deck, hand, or discard pile)
+    const index = Array.from(card.parentElement.children).indexOf(card); // Get the index of the card
     event.dataTransfer.setData('text/plain', card.outerHTML); // Store the HTML content of the dragged card
     event.dataTransfer.setData('source', source); // Store the source of the dragged card
+    event.dataTransfer.setData('index', index); // Store the index of the dragged card
 }
-
 // Function to allow drop
 function allowDrop(event) {
     event.preventDefault();
@@ -281,121 +300,372 @@ function handleDrop(event) {
     event.preventDefault();
     const centerArea = event.target;
     const draggedCardHTML = event.dataTransfer.getData('text/plain'); // Get the HTML content of the dragged card
+    const index = parseInt(event.dataTransfer.getData('index')); // Get the index of the dragged card
 
     // Create a new card element and set its HTML content to that of the dragged card
     const droppedCard = document.createElement('div');
     droppedCard.innerHTML = draggedCardHTML;
 
-    // Remove the draggable attribute from the dropped card
-    droppedCard.querySelector('.card').removeAttribute('draggable');
-
     // Append the dropped card to the center area
-    centerArea.appendChild(droppedCard);
+    centerArea.prepend(droppedCard);
 
-    // Remove the original card from its parent (deck, hand, or discard pile)
-    const originalCards = document.querySelectorAll('.card');
-    originalCards.forEach(originalCard => {
-        if (originalCard.outerHTML === draggedCardHTML) {
+    // Retrieve the original card from its parent (deck, hand, or discard pile)
+    const source = event.dataTransfer.getData('source'); // Get the source of the dragged card
+
+    if(source === 'player1-deck'){
+        const originalCard = document.querySelectorAll('#player1-deck .card')[index];
+        if (originalCard) {
+            // Remove the card from the player's stack array
+            const cardIndex = parseInt(originalCard.getAttribute('data-index'));
+            player1.stack.splice(cardIndex, 1);
+            // Remove the draggable attribute from the dropped card
+            droppedCard.querySelector('.card').removeAttribute('draggable');
             originalCard.parentElement.removeChild(originalCard);
+            // Update the indices of remaining cards
+            const remainingCards = document.querySelectorAll('#player1-deck .card');
+            remainingCards.forEach((card, i) => {
+                card.setAttribute('data-index', i);
+            });
+            //console.log(player1.stack);
+            displayDeck(player1, 'player1-deck');
+            }
+    }
+    if(source === 'player2-deck'){
+        const originalCard = document.querySelectorAll('#player2-deck .card')[index];
+        if (originalCard) {
+            // Remove the card from the player's stack array
+            const cardIndex = parseInt(originalCard.getAttribute('data-index'));
+            player2.stack.splice(cardIndex, 1);
+            // Remove the draggable attribute from the dropped card
+            droppedCard.querySelector('.card').removeAttribute('draggable');
+            originalCard.parentElement.removeChild(originalCard);
+            // Update the indices of remaining cards
+            const remainingCards = document.querySelectorAll('#player2-deck .card');
+            remainingCards.forEach((card, i) => {
+                card.setAttribute('data-index', i);
+            });
+            //console.log(player1.stack);
+            displayDeck(player2, 'player2-deck');
+            }
+    }
+    if(source === 'player1-hand'){
+            const originalCard = document.querySelectorAll('#player1-hand .card')[index];
+            if (originalCard) {
+            // Remove the draggable attribute from the dropped card
+            droppedCard.querySelector('.card').removeAttribute('draggable');
+            originalCard.parentElement.removeChild(originalCard);
+
+            // Update the indices of remaining cards
+            const remainingCards = document.querySelectorAll('#player1-hand .card');
+                remainingCards.forEach((card, i) => {
+                    card.setAttribute('data-index', i);
+                });
+            }
+    }
+
+    if(source === 'player2-hand'){
+        const originalCard = document.querySelectorAll('#player2-hand .card')[index];
+        if (originalCard) {
+        // Remove the draggable attribute from the dropped card
+        droppedCard.querySelector('.card').removeAttribute('draggable');
+        originalCard.parentElement.removeChild(originalCard);
+
+        // Update the indices of remaining cards
+        const remainingCards = document.querySelectorAll('#player2-hand .card');
+            remainingCards.forEach((card, i) => {
+                card.setAttribute('data-index', i);
+            });
         }
-    });
+    }
+
+    if(source === 'player1-discardPile'){
+            const originalCard = document.querySelectorAll('#player1-discardPile .card')[index];
+            if (originalCard) {
+                // Remove the draggable attribute from the dropped card
+                droppedCard.querySelector('.card').removeAttribute('draggable');
+                originalCard.parentElement.removeChild(originalCard);
+
+                // Update the indices of remaining cards
+                const remainingCards = document.querySelectorAll('#player1-discardPile .card');
+                remainingCards.forEach((card, i) => {
+                    card.setAttribute('data-index', i);
+                });
+            }   
+    }
+
+    if(source === 'player2-discardPile'){
+        const originalCard = document.querySelectorAll('#player2-discardPile .card')[index];
+        if (originalCard) {
+            // Remove the draggable attribute from the dropped card
+            droppedCard.querySelector('.card').removeAttribute('draggable');
+            originalCard.parentElement.removeChild(originalCard);
+
+            // Update the indices of remaining cards
+            const remainingCards = document.querySelectorAll('#player2-discardPile .card');
+            remainingCards.forEach((card, i) => {
+                card.setAttribute('data-index', i);
+            });
+        }   
+    }
 }
-const gameTitle = document.getElementById('gameTitle');
-const startGame = document.getElementById('start-button');
-const centerPlay = document.getElementById('center-area');
-const discard = document.getElementById('discard-pile');
-startGame.addEventListener('click', gameSetUp);
 
+function addPile(){
+    const pileOneArray = Array.from(document.getElementById('pile-one'));
+    const pileTwoArray = Array.from(document.getElementById('pile-two'));
+    const pileThreeArray = Array.from(document.getElementById('pile-three'));
+    const pileFourArray = Array.from(document.getElementById('pile-four'));
+    
+    pileOneArray.forEach(elem =>{
+        elem.addEventListener('dragover', allowDrop);
+        elem.addEventListener('drop',handleDrop);
+        //console.log(pileOneArray);
+    });
 
-//This sets up the game 
-function gameSetUp(){
-    startGame.style.display = 'none';
-    gameTitle.style.display = 'none';
+    pileTwoArray.forEach(elem =>{
+        elem.addEventListener('dragover', allowDrop);
+        elem.addEventListener('drop',handleDrop);
 
-    const drawCardButton = document.getElementById('draw-card');
-    drawCardButton.style.display = 'inline-block';
+    });
+    
+    pileThreeArray.forEach(elem =>{
+        elem.addEventListener('dragover', allowDrop);
+        elem.addEventListener('drop',handleDrop);
 
-    // Show the "End Turn" button when the game starts
-    const endTurnButton = document.getElementById('endTurn');
-    endTurnButton.style.display = 'inline-block';
+    });
 
-    // Update the turn message when the game starts
-    const currentPlayer = player1.name; // Replace with actual player's name
-    turnMessage(currentPlayer);
+    pileFourArray.forEach(elem =>{
+        elem.addEventListener('dragover', allowDrop);
+        elem.addEventListener('drop',handleDrop);
 
-    const deck = createDeck();
-    const shuffledDeck = shuffleCards(deck);
-    //console.log(shuffledDeck.length);
+    });
 
-    const players = 2;
+}
 
-    const allPlayers = [player1].concat(player2);
-    //console.log(allPlayers);
-    if(players < 5 ){
-        dealDeck(shuffledDeck,30,allPlayers);
+document.addEventListener('DOMContentLoaded',function(){
+    const gameTitle = document.getElementById('gameTitle');
+    const startGame = document.getElementById('start-button');
+    const centerPlay = document.getElementById('center-area');
+    const discard = document.getElementById('discard-pile');
+    startGame.addEventListener('click', gameSetUp);
+
+    //This sets up the game 
+    function gameSetUp(){
+        startGame.style.display = 'none';
+        gameTitle.style.display = 'none';
+
+        const drawCardButton = document.getElementById('draw-card');
+        drawCardButton.style.display = 'inline-block';
+
+        // Show the "End Turn" button when the game starts
+        const endTurnButton = document.getElementById('endTurn');
+        endTurnButton.style.display = 'inline-block';
+
+        // Update the turn message when the game starts
+        const currentPlayer = player1.name; // Replace with actual player's name
+        turnMessage(currentPlayer);
+
+        const deck = createDeck();
+        const shuffledDeck = shuffleCards(deck);
+        //console.log(shuffledDeck.length);
+
+        const players = 2;
+        const allPlayers = [player1].concat(player2);
+        //console.log(allPlayers);
+        if(players < 5 ){
+            dealDeck(shuffledDeck,30,allPlayers);
+        }
+        else{
+            dealDeck(shuffledDeck,20,allPlayers);
+        }
+        //console.log(allPlayers);
+        //console.log(shuffledDeck.length);
+
+        dealHand(shuffledDeck,allPlayers);
+        //console.log(player1);
+        //console.log(player2);
+
+        displayHand(player1,'player1-hand');
+        displayHand(player2,'player2-hand');
+        displayDeck(player1,'player1-deck');
+        displayDeck(player2,'player2-deck');
+
+        playGame(allPlayers,shuffledDeck);
+
     }
-    else{
-        dealDeck(shuffledDeck,20,allPlayers);
+
+    function playGame(players,deck){
+        while(!gameOver(players)){
+            takeTurns(players[0],deck);
+
+            if(gameOver(players))break;
+
+            takeTurns(players[1],deck);
+        }
     }
-    //console.log(allPlayers);
-    //console.log(shuffledDeck.length);
 
-    dealHand(shuffledDeck,allPlayers);
-    //console.log(player1);
-    //console.log(player2);
+    function takeTurns(player,deck){
+        const drawCard = document.getElementById('draw-card');
+        const endTurn = document.getElementById('endTurn');
+        endTurn.addEventListener('click',handleEndTurn);
 
-    displayHand(player1,'player1-hand');
-    displayHand(player2,'player2-hand');
+        if(player.hand.length< 5 && player.name === "Player 1"){
+            drawCard.addEventListener('click', drawForFive(player1,deck));
+            const playerOneDeck = document.getElementById('player1-deck');
+            const playerOneHand = document.getElementById('player1-hand');
+            const playerOneDiscardPile = document.getElementById('player1-discardPile');
+    
+                // Add event listeners to cards in player 1's deck
+            playerOneDeck.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'deck'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            //console.log("hello");
+            });
+    
+            // Add event listeners to cards in player 1's hand
+            playerOneHand.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'hand'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            });
+    
+                // Add event listeners to cards in player 1's discard pile
+            playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            //console.log("hey");
+            });
 
-    displayDeck(player1,'player1-deck');
-    displayDeck(player2,'player2-deck');
+            // Add event listeners to cards in player 1's discard pile
+            playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+                //console.log("hey");
+            });
 
-    const endTurn = document.getElementById('endTurn');
-    endTurn.addEventListener('click',handleEndTurn);
+            const playerOneCards = document.querySelectorAll('#player-1 .card');
+            playerOneCards.forEach(card => {
+                card.addEventListener('dblclick', handlePlayerOneDblClick);
+            });
+            playerNum(0);
+        }
 
-   const playerTwoCards = document.querySelectorAll('#player-2 .card');
+        if(player.name === "Player 1" && player.hand.length === 5){
+            const playerOneDeck = document.getElementById('player1-deck');
+            const playerOneHand = document.getElementById('player1-hand');
+            const playerOneDiscardPile = document.getElementById('player1-discardPile');
+    
+                // Add event listeners to cards in player 1's deck
+            playerOneDeck.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'deck'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+                //console.log("hello");
+            });
+    
+                // Add event listeners to cards in player 1's hand
+            playerOneHand.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'hand'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            });
+    
+                // Add event listeners to cards in player 1's discard pile
+            playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+                //console.log("hey");
+            });
 
-    playerTwoCards.forEach(card => {
-        card.addEventListener('dblclick', handlePlayerTwoDblClick);
-    });
+            // Add event listeners to cards in player 1's discard pile
+            playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            //console.log("hey");
+            });
 
-    const playerOneDeck = document.getElementById('player1-deck');
-    const playerOneHand = document.getElementById('player1-hand');
-    const playerOneDiscardPile = document.getElementById('player1-discardPile');
-    const gamePlay = document.getElementById('center-area');
+            const playerOneCards = document.querySelectorAll('#player-1 .card');
+            playerOneCards.forEach(card => {
+                card.addEventListener('dblclick', handlePlayerOneDblClick);
+            });
+            playerNum(0);
+        }
 
-    // Add event listeners to cards in player 1's deck
-    playerOneDeck.querySelectorAll('.card').forEach(card => {
-        setCardAttributes(card, 'deck'); // Set attributes for the card
-        card.addEventListener('dragstart', handleDragStart);
-    });
+        if(player.hand.length< 5 && player.name === "Player 2"){
+            drawCard.addEventListener('click', drawForFive(player2,deck));
+            const playerTwoDeck = document.getElementById('player2-deck');
+            const playerTwoHand = document.getElementById('player2-hand');
+            const playerTwoDiscardPile = document.getElementById('player2-discardPile');
 
-    // Add event listeners to cards in player 1's hand
-    playerOneHand.querySelectorAll('.card').forEach(card => {
-        setCardAttributes(card, 'hand'); // Set attributes for the card
-        card.addEventListener('dragstart', handleDragStart);
-    });
+            playerTwoDeck.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'deck'); // Set attributes for the card
+                card.addEventListener('dragstart', handleDragStart);
+            //console.log("hello");
+            });
 
-    // Add event listeners to cards in player 1's discard pile
-    playerOneDiscardPile.querySelectorAll('.card').forEach(card => {
-        setCardAttributes(card, 'discard'); // Set attributes for the card
-        card.addEventListener('dragstart', handleDragStart);
-    });
+            playerTwoHand.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'hand'); // Set attributes for the card
+                    card.addEventListener('dragstart', handleDragStart);
+                    // console.log("hi");
+            });
 
-    // Add event listeners to the center area of play for drop events
-    gamePlay.addEventListener('drop', handleDrop);
-    gamePlay.addEventListener('dragover', allowDrop);
+            playerTwoDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                    card.addEventListener('dragstart', handleDragStart);
+                    //console.log("hey");
+            });
 
-    const playerOneCards = document.querySelectorAll('#player-1 .card');
-    playerOneCards.forEach(card => {
-        card.addEventListener('dblclick', handlePlayerOneDblClick);
-    });
+            const playerTwoCards = document.querySelectorAll('#player-2 .card');
+
+            playerTwoCards.forEach(card => {
+                card.addEventListener('dblclick', handlePlayerTwoDblClick);
+            });
+
+            playerNum(1);
+
+        }
+
+        if(player.name === "Player 2" && player.hand.length === 5){
+            const playerTwoDeck = document.getElementById('player2-deck');
+            const playerTwoHand = document.getElementById('player2-hand');
+            const playerTwoDiscardPile = document.getElementById('player2-discardPile');
+
+            playerTwoDeck.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'deck'); // Set attributes for the card
+                    card.addEventListener('dragstart', handleDragStart);
+                    //console.log("hello");
+            });
+
+            playerTwoHand.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'hand'); // Set attributes for the card
+                    card.addEventListener('dragstart', handleDragStart);
+                    // console.log("hi");
+                });
+
+            playerTwoDiscardPile.querySelectorAll('.card').forEach(card => {
+                setCardAttributes(card, 'discard'); // Set attributes for the card
+                    card.addEventListener('dragstart', handleDragStart);
+            //console.log("hey");
+            });
+
+            const playerTwoCards = document.querySelectorAll('#player-2 .card');
+
+            playerTwoCards.forEach(card => {
+                card.addEventListener('dblclick', handlePlayerTwoDblClick);
+            });
+            playerNum(1);
+        }
+
+           
+    }
+});
 
 
-    const drawCard = document.getElementById('draw-card');
-    //drawCard.addEventListener('click', drawForFive(player1,shuffledDeck));
 
-    //drawForFive(player1,shuffledDeck);
 
+
+
+
+
+
+
+function gameOver(players){
+    return players.some(player =>player.stack.length === 0);
 }
 

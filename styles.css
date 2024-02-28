@@ -34,7 +34,7 @@ game {
 #Stack-1, #Stack-2, #Stack-3, #Stack-4{
     border:1px solid red;
     margin:1em;
-    
+
 }
 
  /* Style for stacked cards */
@@ -81,6 +81,15 @@ label {
     font-size: 20px;
     font-weight: bold;
     color:aliceblue
+}
+
+#pile-one,#pile-two,#pile-three,#pile-four{
+    display: inline-block;
+    text-align: center;
+    border:2px dotted black;
+    width: 100px;
+    height: 150px;
+    margin:2px;
 }
 
 .blue{
