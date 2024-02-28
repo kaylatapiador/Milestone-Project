@@ -191,6 +191,18 @@ function drawForFive(player, deck) {
 
             const newCard = document.createElement('div');
             newCard.className = "card";
+            if(drawCard.suits ==='Red'){
+                newCard.classList.add('red');
+            }
+            if(drawCard.suits[0] === 'Orange'){
+                newCard.classList.add('orange');
+            }
+            if(drawCard.suits === 'Blue'){
+                newCard.classList.add('blue');
+            }
+            if(drawCard.suits === 'Green'){
+                newCard.classList.add('green');
+            }
             newCard.textContent = drawCard.suits + ' ' + drawCard.values;
 
             console.log("New card created:", newCard.textContent);
